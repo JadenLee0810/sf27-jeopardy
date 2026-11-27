@@ -281,6 +281,15 @@ const Sfx = (function () {
     arp(t + 1.9, [72, 76, 79, 84], 0, { type: "pulse50", dur: 0.7, vol: 0.09 });
   });
 
+  // win: a short victory fanfare, then a held major chord and a sparkle run
+  const win = go((t) => {
+    arp(t, [67, 67, 67, 72, 76], 0.1, { type: "pulse50", dur: 0.12, vol: 0.13 });
+    [72, 76, 79, 84].forEach((n) => tone({ f: hz(n), type: "pulse25", t: t + 0.55, dur: 1.5, vol: 0.09, vib: [6, 20] }));
+    tone({ f: hz(48), type: "triangle", t: t + 0.55, dur: 1.5, vol: 0.26 });
+    tone({ f: hz(36), f2: 30, type: "triangle", t, dur: 0.3, vol: 0.3 });
+    arp(t + 1.1, [84, 88, 91, 96, 100, 103, 108], 0.07, { type: "pulse50", dur: 0.1, vol: 0.08 });
+  });
+
   const reset = go((t) => arp(t, [84, 79, 76, 72, 67], 0.05, { type: "pulse25", dur: 0.07, vol: 0.12 }));
 
   // ====================================================
@@ -371,7 +380,7 @@ const Sfx = (function () {
   }
 
   return {
-    click, select, clueOpen, jump, whoosh, pop, land, boardFill, reveal, correct, wrong, dailyDouble, reset,
+    click, select, clueOpen, jump, whoosh, pop, land, boardFill, reveal, correct, wrong, dailyDouble, win, reset,
     tickStart, tickStop, jetStart, jetFly, jetStop, music, duck, setMuted,
     isMuted: () => muted,
     // test hooks (used to render sounds offline and check they are not silent)

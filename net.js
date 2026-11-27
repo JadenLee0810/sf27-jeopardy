@@ -8,6 +8,8 @@
 //  Net.add(who, name, n)      add n points to a player      (who = "Jaden" or "screen")
 //  Net.set(who, name, n)      set a player's score
 //  Net.reset(who)             everyone back to 0
+//  Net.ended / Net.end(who, true|false) / Net.onEnd(fn)   end-of-game flag (host ends it, everyone shows the winner)
+//  Net.winners()              names tied for the top score
 //  Net.connect()              start listening
 //
 //  If there's no server (page opened as a plain file / static hosting) everything still
@@ -15,9 +17,10 @@
 // ====================================================
 const Net = (function () {
   const KEYS = ["Noah", "Hany", "Jihoo", "Kevin"];
-  let state = { scores: Object.fromEntries(KEYS.map((k) => [k, 0])), rev: 0 };
+  let state = { scores: Object.fromEntries(KEYS.map((k) => [k, 0])), rev: 0, ended: false };
   let online = false, es = null;
-  const stateFns = [], statusFns = [];
+  const stateFns = [], statusFns = [], endFns = [];
+  let ended = false;
 
   const emitState = () => stateFns.forEach((f) => f(state.scores));
   const setOnline = (v) => { if (v !== online) { online = v; statusFns.forEach((f) => f(online)); } };
@@ -26,8 +29,10 @@ const Net = (function () {
     if (!next || !next.scores) return;
     if (!force && next.rev < state.rev) return;   // an older answer that arrived late: ignore it
     KEYS.forEach((k) => { if (!Number.isFinite(next.scores[k])) next.scores[k] = 0; });
+    next.ended = next.ended === true;
     state = next;
     emitState();
+    if (state.ended !== ended) { ended = state.ended; endFns.forEach((f) => f(ended)); }
   }
 
   async function post(body) {
@@ -56,6 +61,13 @@ const Net = (function () {
     isOnline: () => online,
     on(fn) { stateFns.push(fn); fn(state.scores); },
     onStatus(fn) { statusFns.push(fn); fn(online); },
+    onEnd(fn) { endFns.push(fn); fn(ended); },
+    get ended() { return ended; },
+    end: (who, v) => post({ who, end: !!v }),
+    winners() {
+      const top = Math.max(...KEYS.map((k) => state.scores[k] || 0));
+      return KEYS.filter((k) => (state.scores[k] || 0) === top);
+    },
     add: (who, name, n) => post({ who, add: { [name]: n } }),
     set: (who, name, n) => post({ who, set: { [name]: n } }),
     reset: (who) => post({ who, reset: true }),

@@ -33,8 +33,8 @@ function load() {
     const j = JSON.parse(fs.readFileSync(STATE_FILE, "utf8"));
     const scores = zero();
     KEYS.forEach((k) => { if (Number.isInteger(j.scores && j.scores[k])) scores[k] = j.scores[k]; });
-    return { scores, rev: Number.isInteger(j.rev) ? j.rev : 0 };
-  } catch (_) { return { scores: zero(), rev: 0 }; }
+    return { scores, rev: Number.isInteger(j.rev) ? j.rev : 0, ended: j.ended === true };
+  } catch (_) { return { scores: zero(), rev: 0, ended: false }; }
 }
 let state = load();
 const save = () => { try { fs.writeFileSync(STATE_FILE, JSON.stringify(state)); } catch (_) {} };
@@ -71,7 +71,8 @@ function postScores(req, res) {
     let b;
     try { b = JSON.parse(body); } catch (_) { return json(res, 400, { error: "bad json" }); }
     if (!b || !WHO.includes(b.who)) return json(res, 403, { error: "not allowed" });
-    if (b.reset) KEYS.forEach((k) => { state.scores[k] = 0; });
+    if (b.reset) { KEYS.forEach((k) => { state.scores[k] = 0; }); state.ended = false; }
+    if (typeof b.end === "boolean") state.ended = b.end;          // host: end the game / resume
     if (b.set && typeof b.set === "object")
       for (const k of KEYS) if (Number.isInteger(b.set[k])) state.scores[k] = clampScore(b.set[k]);
     if (b.add && typeof b.add === "object")

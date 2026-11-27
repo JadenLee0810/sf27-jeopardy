@@ -27,8 +27,8 @@
   const SKY = [[0, "#1b1340"], [40, "#43205f"], [80, "#7c2e7a"], [110, "#c4407f"],
     [135, "#ee6a5a"], [155, "#ff9a4a"], [170, "#ffc46a"], [178, "#ffe49a"]];
 
-  function draw(canvas) {
-    const vw = window.innerWidth || 390, vh = window.innerHeight || 844;
+  function draw(canvas, vw, vh) {
+    vw = vw || window.innerWidth || 390; vh = vh || window.innerHeight || 844;
     const W = Math.max(112, Math.min(480, Math.round((H * vw) / vh)));
     const S = Math.max(2, Math.ceil(vh / H));
     canvas.width = W * S; canvas.height = H * S;

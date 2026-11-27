@@ -364,3 +364,27 @@ html, body {
   box-shadow: 0 0 0 2px var(--grey);
 }
 .sound-btn:hover { color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+
+/* ===== END OF GAME: winner solo shot ===== */
+.winner { position: fixed; inset: 0; z-index: 90; background: #0b0820; overflow: hidden; font-family: "Press Start 2P", monospace; color: #fff; }
+.winner[hidden] { display: none; }
+.win-bg { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.win-spot { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 75% at 50% 58%, transparent 0 45%, rgba(5, 3, 20, .72) 100%); }
+.win-top { position: absolute; top: 3.5vh; left: 0; right: 0; text-align: center; z-index: 3; }
+.win-title { display: inline-block; font-size: min(6.4vw, 11vh); color: #ffd84a; letter-spacing: .04em;
+  text-shadow: 0 .09em 0 #b8321c, 0 .18em 0 #000, .06em 0 0 #000, -.06em 0 0 #000; animation: win-pulse 1s steps(2) infinite; }
+@keyframes win-pulse { 50% { color: #fff3a0; transform: translateY(-.1em); } }
+.win-stage { position: absolute; z-index: 2; bottom: 12vh; display: flex; align-items: flex-end; gap: 2vw; }
+.winner.solo .win-stage { left: 24%; transform: translateX(-50%); }
+.winner.tie .win-stage { left: 50%; transform: translateX(-50%); }
+.win-sprite { height: 62vh; width: auto; image-rendering: pixelated; animation: win-hop .8s steps(4) infinite; filter: drop-shadow(0 .8vh 0 rgba(0,0,0,.35)); }
+.winner.tie .win-sprite { height: 50vh; }
+.win-sprite:nth-child(2) { animation-delay: .2s; } .win-sprite:nth-child(3) { animation-delay: .4s; } .win-sprite:nth-child(4) { animation-delay: .6s; }
+@keyframes win-hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5vh); } }
+.win-plate { position: absolute; z-index: 3; bottom: 14vh; text-align: center; padding: 2.4vh 2vw; background: rgba(12, 8, 40, .82); box-shadow: 0 0 0 .5vh #ffd84a, 0 0 0 1vh #000; }
+.winner.solo .win-plate { left: 62%; width: 33vw; }
+.winner.tie .win-plate { left: 50%; transform: translateX(-50%); bottom: 2.5vh; min-width: 50vw; padding: 1.5vh 2vw; }
+.win-name { font-size: min(3.6vw, 7vh); color: #ffd84a; text-shadow: .2vh .2vh 0 #000; word-break: break-word; }
+.win-school { margin-top: 1.6vh; font-size: min(1.3vw, 2.4vh); color: #9ad8ff; }
+.win-score { margin-top: 2.2vh; font-size: min(3.2vw, 6vh); color: #4ef08a; text-shadow: .2vh .2vh 0 #000; }
+.win-conf { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }

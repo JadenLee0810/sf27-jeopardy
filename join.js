@@ -151,7 +151,12 @@
         </div>
         <div class="holo"></div>
       </div>`;
-    stage.querySelector(".art").appendChild(cloneCanvas(spriteOf(r.kind)));
+    const art = stage.querySelector(".art");
+    const sceneCv = document.createElement("canvas");          // this player's landmark behind them
+    sceneCv.className = "scene-bg";
+    Backdrops.draw(sceneCv, r.bg || "campanile", 250, 212);
+    art.classList.add("scene"); art.insertBefore(sceneCv, art.firstChild);
+    art.appendChild(cloneCanvas(spriteOf(r.kind)));
     live.push(() => { const e = stage.querySelector(".hp-val"); if (e && !r.host) e.textContent = Net.scores[r.name] || 0; });
 
     // little 3D tilt when you drag a finger / mouse over the card
@@ -203,6 +208,35 @@
     const ok = await promise;
     if (!ok) toast("COULD NOT REACH THE SERVER");
     return ok;
+  }
+
+  // HOST: end the game -> the big screen shows a solo shot of the winner
+  function endPane(me) {
+    const wrap = document.createElement("div");
+    const render = () => {
+      const list = standings(), top = list[0].score, w = list.filter((s) => s.score === top);
+      wrap.innerHTML = `<h3 class="sec">END GAME</h3>
+        <div class="end-card"><small>${Net.ended ? "GAME OVER - WINNER ON THE BIG SCREEN" : (w.length > 1 ? "TIED FOR THE LEAD" : "CURRENT LEADER")}</small>
+          <div class="end-av"></div><div class="end-name">${w.map((s) => s.r.name.toUpperCase()).join(" &amp; ")}</div><small>${money(top)}</small></div>
+        <div class="rank-list"></div>
+        <button type="button" class="btn big wide ${Net.ended ? "" : "danger"}" id="btn-end">${Net.ended ? "RESUME GAME" : "END GAME + SHOW WINNER"}</button>
+        <p class="net-note">${Net.isOnline() ? "" : "SERVER OFFLINE - CANNOT END THE GAME"}</p>`;
+      const av = wrap.querySelector(".end-av"); w.forEach((s) => av.appendChild(avatarOf(s.r.kind)));
+      const rows = wrap.querySelector(".rank-list");
+      list.forEach(({ r, score }) => {
+        const row = document.createElement("div");
+        row.className = "rank-row";
+        row.innerHTML = `<span class="n">${rankOf(score, list)}</span><span class="av"></span><span class="who">${r.name.toUpperCase()}<small>${r.school.toUpperCase()}</small></span><span class="pts">${money(score)}</span>`;
+        row.querySelector(".av").appendChild(avatarOf(r.kind));
+        rows.appendChild(row);
+      });
+      wrap.querySelector("#btn-end").addEventListener("click", () => {
+        if (Net.ended) edit(Net.end(me.name, false));
+        else if (confirm("End the game and show the winner?")) edit(Net.end(me.name, true));
+      });
+    };
+    render(); live.push(render);
+    return wrap;
   }
 
   // HOST: edit everyone's points (shows up on every phone and the big screen right away)
@@ -272,10 +306,31 @@
     return wrap;
   }
 
+  // everyone's phone: GAME OVER card with the winner (tap to close)
+  let curPlayer = null, overDismissed = false;
+  function paintOver() {
+    let o = $("over");
+    if (!Net.ended || !curPlayer || overDismissed) { if (o) o.hidden = true; return; }
+    if (!o) {
+      o = document.createElement("div"); o.id = "over"; o.className = "over";
+      o.addEventListener("click", () => { overDismissed = true; o.hidden = true; });
+      document.body.appendChild(o);
+    }
+    const list = standings(), top = list[0].score, w = list.filter((s) => s.score === top);
+    const mine = list.find((s) => s.r === curPlayer);
+    o.innerHTML = `<div class="over-in"><div class="over-t">GAME OVER</div><div class="over-av"></div>
+      <small>${w.length > 1 ? "TIE FOR 1ST" : "WINNER"}</small><div class="over-n">${w.map((s) => s.r.name.toUpperCase()).join(" &amp; ")}</div><div class="over-s">${money(top)}</div>
+      ${curPlayer.host ? "" : `<div class="over-me">YOU: ${ordinal(rankOf(mine.score, list)).toUpperCase()} &middot; ${money(mine.score)}</div>`}
+      <small class="over-tap">TAP TO CLOSE</small></div>`;
+    w.forEach((s) => o.querySelector(".over-av").appendChild(avatarOf(s.r.kind)));
+    o.hidden = false;
+  }
+
   function openApp(r) {
+    curPlayer = r; overDismissed = false; paintOver();
     live.length = 0;                       // drop refreshers from a previous login
     const tabs = r.host
-      ? [["key", "ANSWER KEY", keyPane(r)], ["scores", "POINTS", scoresPane(r)], ["card", "CARD", cardPane(r)]]
+      ? [["key", "ANSWER KEY", keyPane(r)], ["scores", "POINTS", scoresPane(r)], ["end", "END GAME", endPane(r)], ["card", "CARD", cardPane(r)]]
       : [["card", "CARD", cardPane(r)], ["ranks", "RANKS", ranksPane(r)]];
     const panes = $("panes"), nav = $("nav");
     panes.innerHTML = ""; nav.innerHTML = "";
@@ -292,12 +347,14 @@
       });
       nav.appendChild(b);
     });
+    bgKind = r.bg || "campanile"; paintBg();
     show("s-app");
   }
 
   $("btn-exit").addEventListener("click", () => {
     try { localStorage.removeItem(STORE); } catch (_) {}
     input.value = ""; refreshName();
+    bgKind = "campanile"; paintBg(); curPlayer = null; paintOver();
     show("s-name");
   });
 
@@ -306,7 +363,8 @@
   // ====================================================
   buildWordmark();
   Net.connect();
-  Net.on(() => live.forEach((f) => f()));
+  Net.on(() => { live.forEach((f) => f()); paintOver(); });
+  Net.onEnd((e) => { if (!e) overDismissed = false; live.forEach((f) => f()); paintOver(); });
   Net.onStatus((on) => {
     const b = $("live-badge");
     b.classList.toggle("off", !on);
@@ -320,7 +378,8 @@
     if (r) openApp(r); else { show("s-name"); setTimeout(() => input.focus(), 50); }
   });
   // Campanile backdrop; redrawn when the phone rotates / resizes so it always fits
-  const paintBg = () => Campanile.draw($("bg"));
+  let bgKind = "campanile";                // title screen = Campanile; after joining = the player's own spot
+  const paintBg = () => Backdrops.draw($("bg"), bgKind);
   requestAnimationFrame(paintBg);
   let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(paintBg, 150); });
 })();

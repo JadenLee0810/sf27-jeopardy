@@ -180,8 +180,56 @@ const paintSnd = () => { sndBtn.textContent = Sfx.isMuted() ? "SND OFF" : "SND O
 paintSnd();
 sndBtn.addEventListener("click", () => { Sfx.setMuted(!Sfx.isMuted()); paintSnd(); });
 
+// ---------- END OF GAME: solo shot of the winner ----------
+let confRaf = 0, scoreRaf = 0;
+function startConfetti() {
+  const cv = $("win-conf"), ctx = cv.getContext("2d");
+  cv.width = innerWidth; cv.height = innerHeight;
+  const COLS = ["#ffd84a", "#ff5a6a", "#4ef08a", "#5ac8ff", "#ffffff", "#c78bff"];
+  const bits = Array.from({ length: 110 }, () => ({ x: Math.random() * cv.width, y: -Math.random() * cv.height, s: 6 + Math.floor(Math.random() * 3) * 4, vy: 90 + Math.random() * 150, vx: (Math.random() - .5) * 60, c: COLS[Math.floor(Math.random() * COLS.length)] }));
+  let last = performance.now();
+  cancelAnimationFrame(confRaf);
+  const tick = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    bits.forEach((b) => {
+      b.y += b.vy * dt; b.x += b.vx * dt;
+      if (b.y > cv.height) { b.y = -10; b.x = Math.random() * cv.width; }
+      ctx.fillStyle = b.c; ctx.fillRect(Math.round(b.x / 4) * 4, Math.round(b.y / 4) * 4, b.s, b.s);
+    });
+    confRaf = requestAnimationFrame(tick);
+  };
+  confRaf = requestAnimationFrame(tick);
+}
+function showWinner() {
+  const names = Net.winners(), people = names.map((n) => ROSTER.find((p) => p.name === n)).filter(Boolean);
+  if (!people.length) return;
+  const el = $("winner"), tie = people.length > 1, score = Net.scores[names[0]] || 0;
+  el.classList.toggle("tie", tie); el.classList.toggle("solo", !tie);
+  Backdrops.draw($("win-bg"), people[0].bg, innerWidth, innerHeight);
+  const stage = $("win-stage"); stage.innerHTML = "";
+  people.forEach((p) => { const c = Scene.sprite(p.kind, "raise"); c.className = "win-sprite"; stage.appendChild(c); });
+  $("win-title").textContent = tie ? "IT'S A TIE!" : "WINNER!";
+  $("win-name").textContent = people.map((p) => p.name.toUpperCase()).join(" & ");
+  $("win-school").textContent = tie ? "SPLIT THE GLORY" : people[0].school.toUpperCase() + " " + people[0].mascot.toUpperCase();
+  const money = (n) => (n < 0 ? "-$" : "$") + Math.abs(n);
+  const t0 = performance.now(); cancelAnimationFrame(scoreRaf);
+  const count = (now) => { const k = Math.min(1, (now - t0) / 1400); $("win-score").textContent = money(Math.round(score * k)); if (k < 1) scoreRaf = requestAnimationFrame(count); };
+  scoreRaf = requestAnimationFrame(count);
+  el.hidden = false;
+  Sfx.tickStop(); Sfx.duck(false); Sfx.music(null); Sfx.win();
+  startConfetti();
+}
+function hideWinner() {
+  if ($("winner").hidden) return;
+  $("winner").hidden = true; cancelAnimationFrame(confRaf); cancelAnimationFrame(scoreRaf);
+  Sfx.music("board");
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("winner").hidden) Net.end("screen", false); });
+
 resetGame();
 
 // scores are shared with the phones (host edits show up here live)
 Net.on((s) => { TEAM_KEYS.forEach((k, i) => { scores[i] = s[k]; }); renderScores(); });
+Net.onEnd((ended) => { if (ended) { current = null; $("modal").hidden = true; showWinner(); } else hideWinner(); });
 Net.connect();
