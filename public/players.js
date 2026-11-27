@@ -10,7 +10,7 @@ const ROSTER = [
       { n: "Comm Ave Dash", d: "Buzz in first and snag the clue.", p: "30" },
       { n: "Fenway Rally", d: "Bounce back after a wrong answer.", p: "50+" },
     ],
-    flavor: "Has never once let a clue slip past the Charles." },
+    flavor: "Square like Minecraft." },
 
   { name: "Kevin", bg: "union", school: "UC Davis", short: "UCD", mascot: "Aggie", kind: "davis",
     c1: "#d3b05a", c2: "#1e3f78",
@@ -18,7 +18,7 @@ const ROSTER = [
       { n: "Aggie Stampede", d: "Chain correct answers for a bonus.", p: "40" },
       { n: "Cow Town Calm", d: "Stay cool on a Daily Double.", p: "60+" },
     ],
-    flavor: "Bikes to every question. Arrives early." },
+    flavor: "UC Dih's sexy frat queen." },
 
   { name: "Hany", bg: "palace", school: "Rutgers", short: "RU", mascot: "Scarlet Knight", kind: "rutgers",
     c1: "#d71f4b", c2: "#3a1018",
@@ -26,7 +26,7 @@ const ROSTER = [
       { n: "Scarlet Charge", d: "Steal a clue another player misses.", p: "30" },
       { n: "Turnpike Turbo", d: "Double speed on the next buzz.", p: "50+" },
     ],
-    flavor: "Knows the answer. Also knows a shortcut." },
+    flavor: "Weird asf." },
 
   { name: "Jihoo", bg: "coit", school: "UCLA", short: "UCLA", mascot: "Bruin", kind: "ucla",
     c1: "#2b8de0", c2: "#0d2e57",
@@ -34,7 +34,7 @@ const ROSTER = [
       { n: "Bruin Blitz", d: "Fast buzz, big payout.", p: "40" },
       { n: "Westwood Wave", d: "Pick a category and own it.", p: "60+" },
     ],
-    flavor: "Sunny disposition. Ruthless on the buzzer." },
+    flavor: "Jihoo the Libtard." },
 
   { name: "Jaden", bg: "campanile", school: "UC Berkeley", short: "CAL", mascot: "Golden Bear", kind: "cal", host: true,
     c1: "#1d2850", c2: "#0a1128",
