@@ -75,6 +75,12 @@ const SceneStage = (function () {
       heroes.push({ h, sh, kind: it.kind });
     });
 
+    // the join link, written just above everyone's heads
+    const link = el("div", "scene-link");
+    link.textContent = "https://sf27-jeopardy.vercel.app/join";
+    link.style.top = Math.max(8, Math.min(...L.items.map((it) => it.y)) - 60) + "px";
+    stage.appendChild(link);
+
     // the Berkeley guy's cap is the JOIN button
     const ci = L.items.findIndex((it) => Scene.PEOPLE.find((p) => p.kind === it.kind).cap);
     if (ci >= 0) {

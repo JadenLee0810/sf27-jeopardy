@@ -388,3 +388,8 @@ html, body {
 .win-school { margin-top: 1.6vh; font-size: min(1.3vw, 2.4vh); color: #9ad8ff; }
 .win-score { margin-top: 2.2vh; font-size: min(3.2vw, 6vh); color: #4ef08a; text-shadow: .2vh .2vh 0 #000; }
 .win-conf { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
+
+/* join link above the heads on the scene */
+.scene-link { position: absolute; left: 0; width: 100%; text-align: center; z-index: 3; pointer-events: none;
+  font-family: "Press Start 2P", monospace; font-size: 27px; letter-spacing: 1px; color: #fff;
+  text-shadow: 3px 0 0 #1b1340, -3px 0 0 #1b1340, 0 3px 0 #1b1340, 0 -3px 0 #1b1340, 3px 3px 0 #1b1340, -3px 3px 0 #1b1340, 3px -3px 0 #1b1340, -3px -3px 0 #1b1340, 0 6px 0 #b8321c; }
