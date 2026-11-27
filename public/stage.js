@@ -80,6 +80,24 @@ const SceneStage = (function () {
     link.textContent = "https://sf27-jeopardy.vercel.app/join";
     link.style.top = Math.max(8, Math.min(...L.items.map((it) => it.y)) - 60) + "px";
     stage.appendChild(link);
+    // hidden until the host presses NEXT (button, Enter, Space or the right arrow)
+    const nextBtn = el("button", "scene-next");
+    nextBtn.type = "button"; nextBtn.textContent = "NEXT ▶";
+    root.appendChild(nextBtn);
+    const showLink = () => {
+      if (link.classList.contains("show")) return;
+      link.classList.add("show"); nextBtn.classList.add("gone"); Sfx.select();
+    };
+    nextBtn.addEventListener("click", showLink);
+    if (!SceneStage._keys) {
+      SceneStage._keys = true;
+      document.addEventListener("keydown", (e) => {
+        if (!["Enter", " ", "ArrowRight"].includes(e.key)) return;
+        if (!document.getElementById("screen-scene").classList.contains("active") || busy) return;
+        e.preventDefault(); SceneStage._show && SceneStage._show();
+      });
+    }
+    SceneStage._show = showLink;
 
     // the Berkeley guy's cap is the JOIN button
     const ci = L.items.findIndex((it) => Scene.PEOPLE.find((p) => p.kind === it.kind).cap);
@@ -156,5 +174,5 @@ const SceneStage = (function () {
     requestAnimationFrame(frame);
   }
 
-  return { mount, enter };
+  return { mount, enter, _keys: false, _show: null };
 })();
