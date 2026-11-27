@@ -205,11 +205,11 @@ html, body {
 
 /* ---------- Scoreboard ---------- */
 .scoreboard {
-  display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+  display: flex; flex-wrap: nowrap; gap: 14px; justify-content: center;   /* always one row */
   margin-top: 24px;
 }
 .team {
-  min-width: 160px;
+  flex: 1 1 0; min-width: 0; max-width: 300px;
   padding: 12px 14px;
   background: var(--bg-2);
   text-align: center;
@@ -406,3 +406,6 @@ html, body {
 .scene-next:hover { background: #e04a2c; }
 .scene-next.gone { display: none; }
 @keyframes next-blink { 50% { color: #ffd84a; } }
+
+.team-name, .team-score { min-width: 0; }
+@media (max-width: 760px) { .scoreboard { gap: 8px; } .team { padding: 10px 6px; } .team-score { font-size: 14px; } }
