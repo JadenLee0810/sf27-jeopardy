@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bethel Ppl Jeopardy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt">
+    <!-- Screens: only one has .active at a time -->
+
+    <!-- LANDING (placeholder - replace with your custom page later) -->
+    <section id="screen-landing" class="screen active">
+      <h1 class="logo">THANKSGIVING <span>2026</span> @ SAN FRANCISCO</h1>
+      <div id="us-map" class="us-map" aria-label="Map of the US with San Francisco, Davis, Los Angeles, New Brunswick and Boston marked">
+        <button id="btn-start" class="play-btn" aria-label="Play">
+          <span class="play-icon"></span>
+        </button>
+      </div>
+      <h2 class="subtitle">BETHEL PPL JEOPARDY</h2>
+    </section>
+
+    <!-- SCENE: where the plane lands (Golden Gate at sunset + the 5 of us) -->
+    <section id="screen-scene" class="screen scene-screen">
+      <div id="scene-root" class="scene-root" aria-label="Five friends in front of the Golden Gate Bridge at sunset. Press the cap to join."></div>
+    </section>
+
+    <!-- JOIN ON PHONE (instruction slide - placeholder values) -->
+    <section id="screen-join" class="screen">
+      <h1 class="logo">JOIN ON YOUR <span>PHONE</span></h1>
+
+      <div class="join-grid">
+        <div class="qr-card">
+          <canvas id="qr" aria-label="QR code placeholder"></canvas>
+          <p class="qr-note">QR PLACEHOLDER</p>
+        </div>
+
+        <ol class="steps">
+          <li><b>1</b><span>SCAN THE QR CODE OR GO TO <em class="hl">CUSTOMLINK.COM/JOIN</em></span></li>
+          <li><b>2</b><span>TAP JOIN AND ENTER YOUR NAME</span></li>
+          <li><b>3</b><span>GET YOUR PLAYER CARD</span></li>
+          <li><b>4</b><span>BUZZ IN AND WATCH YOUR RANKING LIVE</span></li>
+        </ol>
+
+        <div class="phone" aria-hidden="true">
+          <div class="phone-screen">
+            <p class="phone-label">YOUR RANK</p>
+            <p class="phone-rank">#2</p>
+            <p class="phone-score">$1,200</p>
+            <ul class="phone-board">
+              <li><span>1 ALEX</span><span>$1,500</span></li>
+              <li class="me"><span>2 YOU</span><span>$1,200</span></li>
+              <li><span>3 SAM</span><span>$800</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-join-continue" class="btn">START GAME</button>
+    </section>
+
+    <!-- GAME BOARD -->
+    <section id="screen-game" class="screen">
+      <header class="topbar">
+        <h2 class="title">BETHEL PPL JEOPARDY</h2>
+        <button id="btn-reset" class="btn btn-small">RESET</button>
+      </header>
+
+      <main id="board" class="board" aria-label="Game board"></main>
+
+      <footer id="scoreboard" class="scoreboard" aria-label="Scoreboard"></footer>
+    </section>
+
+    <!-- QUESTION MODAL -->
+    <div id="modal" class="modal" hidden>
+      <div class="dialog">
+        <div class="dialog-head">
+          <span id="modal-category"></span>
+          <span id="modal-value"></span>
+        </div>
+        <p id="modal-question" class="question"></p>
+        <p id="modal-answer" class="answer" hidden></p>
+
+        <div class="dialog-actions">
+          <button id="btn-reveal" class="btn">REVEAL</button>
+        </div>
+
+        <div id="award" class="award" hidden>
+          <p class="award-label">WHO GOT IT?</p>
+          <div id="award-buttons" class="award-buttons"></div>
+          <button id="btn-nobody" class="btn btn-ghost">NOBODY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="fade" class="fade"></div>
+  <button id="btn-sound" class="sound-btn" aria-label="Turn sound on or off">SND ON</button>
+
+  <script src="audio.js"></script>
+  <script src="game-data.js"></script>
+  <script src="net.js"></script>
+  <script src="scene.js"></script>
+  <script src="stage.js"></script>
+  <script src="map.js"></script>
+  <script src="transition.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

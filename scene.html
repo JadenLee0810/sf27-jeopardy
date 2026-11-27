@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scene Preview</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0f0f2d; }
+    canvas { display: block; width: 100vw; height: 100vh; object-fit: cover; image-rendering: pixelated; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <script src="scene.js"></script>
+  <script>Scene.draw(document.getElementById("scene"));</script>
+</body>
+</html>

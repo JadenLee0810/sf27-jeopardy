@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0f2d">
+  <title>Jeopardy @ SF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="join.css">
+</head>
+<body>
+  <!-- sunset backdrop: pixel-art Campanile at UC Berkeley -->
+  <canvas id="bg" class="bg" aria-hidden="true"></canvas>
+  <div class="shade" aria-hidden="true"></div>
+
+  <main id="app">
+
+    <!-- 1. TITLE -->
+    <section id="s-title" class="screen on">
+      <div class="title-wrap">
+        <h1 id="wm" class="wordmark" aria-label="Jeopardy at SF"></h1>
+        <p class="tagline">THANKSGIVING 2026</p>
+      </div>
+      <button id="btn-join" class="btn big blink-btn">TAP TO JOIN</button>
+    </section>
+
+    <!-- 2. ENTER YOUR NAME -->
+    <section id="s-name" class="screen">
+      <form id="name-form" class="panel" autocomplete="off" novalidate>
+        <h2 class="panel-title">ENTER YOUR NAME</h2>
+
+        <div id="preview" class="preview" aria-live="polite"></div>
+
+        <input id="name-input" class="name-input" type="text" inputmode="text" autocapitalize="words"
+               autocorrect="off" spellcheck="false" maxlength="12" placeholder="NAME" aria-label="Your name">
+        <div id="chips" class="chips"></div>
+        <p id="name-msg" class="msg" role="alert"></p>
+
+        <button type="submit" class="btn big">GO</button>
+        <button type="button" id="btn-back" class="link">BACK</button>
+      </form>
+    </section>
+
+    <!-- 3. PLAYER / HOST APP -->
+    <section id="s-app" class="screen">
+      <header class="topbar">
+        <span class="brand">JEOPARDY @ SF</span>
+        <span class="live" id="live-badge"><i></i><span>LIVE</span></span>
+        <button id="btn-exit" class="link small" aria-label="Switch player">EXIT</button>
+      </header>
+      <div id="panes" class="panes"></div>
+      <nav id="nav" class="nav" aria-label="Sections"></nav>
+    </section>
+
+  </main>
+
+  <script src="scene.js"></script>
+  <script src="campanile.js"></script>
+  <script src="players.js"></script>
+  <script src="game-data.js"></script>
+  <script src="net.js"></script>
+  <script src="join.js"></script>
+</body>
+</html>

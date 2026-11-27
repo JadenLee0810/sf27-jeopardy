@@ -1,0 +1,12 @@
+{
+  "name": "sf27-jeopardy",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "local": "node server.js",
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
