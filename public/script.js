@@ -42,26 +42,52 @@ function renderBoard() {
   });
 }
 
+// The scoreboard is built once and then updated in place, so a live update (from a phone) never
+// steals the cursor while you are typing a name or a score.
 function renderScores() {
   const sb = $("scoreboard");
-  sb.innerHTML = "";
-  TEAMS.forEach((name, i) => {
-    const el = document.createElement("div");
-    el.className = "team";
+  if (sb.children.length !== TEAMS.length) {
+    sb.innerHTML = "";
+    TEAMS.forEach((name, i) => {
+      const el = document.createElement("div");
+      el.className = "team";
 
-    const input = document.createElement("input");
-    input.className = "team-name";
-    input.value = name;
-    input.maxLength = 12;
-    input.setAttribute("aria-label", `Team ${i + 1} name`);
-    input.addEventListener("input", () => { TEAMS[i] = input.value; });
+      const input = document.createElement("input");
+      input.className = "team-name";
+      input.value = name;
+      input.maxLength = 12;
+      input.setAttribute("aria-label", `Team ${i + 1} name`);
+      input.addEventListener("input", () => { TEAMS[i] = input.value; });
 
-    const score = document.createElement("div");
-    score.className = "team-score" + (scores[i] < 0 ? " neg" : "");
-    score.textContent = fmt(scores[i]);
+      // click the points and type a new total (Enter or click away to save, Esc to cancel)
+      const score = document.createElement("input");
+      score.className = "team-score";
+      score.type = "text"; score.inputMode = "numeric"; score.autocomplete = "off"; score.spellcheck = false;
+      score.title = "Click to edit points";
+      score.setAttribute("aria-label", `${name} points`);
+      score.addEventListener("focus", () => { score.value = String(scores[i]); score.select(); });
+      score.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") score.blur();
+        else if (e.key === "Escape") { score.value = fmt(scores[i]); score.dataset.cancel = "1"; score.blur(); }
+      });
+      score.addEventListener("blur", () => {
+        const cancelled = score.dataset.cancel === "1"; delete score.dataset.cancel;
+        const n = parseInt(score.value.replace(/[$,s]/g, ""), 10);
+        if (!cancelled && Number.isFinite(n) && n !== scores[i]) {
+          scores[i] = Math.max(-1000000, Math.min(1000000, n));
+          Net.set("screen", TEAM_KEYS[i], scores[i]);                 // share it with every phone
+        }
+        renderScores();
+      });
 
-    el.append(input, score);
-    sb.appendChild(el);
+      el.append(input, score);
+      sb.appendChild(el);
+    });
+  }
+  [...sb.children].forEach((el, i) => {
+    const score = el.querySelector(".team-score");
+    score.classList.toggle("neg", scores[i] < 0);
+    if (document.activeElement !== score) score.value = fmt(scores[i]);   // leave it alone while it is being edited
   });
 }
 

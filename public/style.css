@@ -224,7 +224,10 @@ html, body {
   text-transform: uppercase;
 }
 .team-name:focus { outline: none; border-bottom-color: var(--gold); }
-.team-score { font-size: 18px; color: var(--gold); }
+.team-score { display: block; width: 100%; margin-top: 4px; padding: 2px 0; font: inherit; font-size: 18px; text-align: center; color: var(--gold);
+  background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: text; }
+.team-score:hover { border-bottom-color: rgba(255, 216, 74, .35); }
+.team-score:focus { outline: none; border-bottom-color: var(--gold); background: rgba(255, 255, 255, .07); }
 .team-score.neg { color: var(--red); }
 
 /* ---------- Modal: the clue fills the whole screen ---------- */
