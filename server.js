@@ -18,13 +18,12 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const { KEYS, parse, clamp } = require("./lib/rules");
 
 const PORT = Number(process.env.PORT) || 3000;
-const ROOT = __dirname;
-const STATE_FILE = path.join(ROOT, "state.json");
-const KEYS = ["Noah", "Hany", "Jihoo", "Kevin"];          // the four players
-const WHO = ["Jaden", "screen"];                           // who may change scores
-const LIMIT = 1000000;
+const ROOT = path.join(__dirname, "public");              // the pages
+const DATA = __dirname;
+const STATE_FILE = path.join(DATA, "state.json");
 
 // ---------- state ----------
 const zero = () => Object.fromEntries(KEYS.map((k) => [k, 0]));
@@ -62,7 +61,6 @@ const json = (res, code, obj) => {
   res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-store" });
   res.end(JSON.stringify(obj));
 };
-const clampScore = (n) => Math.max(-LIMIT, Math.min(LIMIT, n));
 
 function postScores(req, res) {
   let body = "";
@@ -70,13 +68,13 @@ function postScores(req, res) {
   req.on("end", () => {
     let b;
     try { b = JSON.parse(body); } catch (_) { return json(res, 400, { error: "bad json" }); }
-    if (!b || !WHO.includes(b.who)) return json(res, 403, { error: "not allowed" });
-    if (b.reset) { KEYS.forEach((k) => { state.scores[k] = 0; }); state.ended = false; }
-    if (typeof b.end === "boolean") state.ended = b.end;          // host: end the game / resume
-    if (b.set && typeof b.set === "object")
-      for (const k of KEYS) if (Number.isInteger(b.set[k])) state.scores[k] = clampScore(b.set[k]);
-    if (b.add && typeof b.add === "object")
-      for (const k of KEYS) if (Number.isInteger(b.add[k])) state.scores[k] = clampScore(state.scores[k] + b.add[k]);
+    const p = parse(b);
+    if (p.error) return json(res, p.status, { error: p.error });
+    const op = p.op;
+    if (op.reset) { KEYS.forEach((k) => { state.scores[k] = 0; }); state.ended = false; }
+    KEYS.forEach((k) => { if (k in op.set) state.scores[k] = op.set[k]; });
+    KEYS.forEach((k) => { if (k in op.add) state.scores[k] = clamp(state.scores[k] + op.add[k]); });
+    if (op.end !== null) state.ended = op.end;                 // host: end the game / resume
     state.rev++;
     save();
     broadcast();
@@ -90,7 +88,7 @@ const MIME = {
   ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".ico": "image/x-icon", ".webp": "image/webp",
   ".mp3": "audio/mpeg", ".ogg": "audio/ogg", ".wav": "audio/wav", ".woff2": "font/woff2",
 };
-const PRIVATE = new Set(["server.js", "state.json", "package.json", "package-lock.json"]);
+const PRIVATE = new Set(["state.json"]);
 
 function serveStatic(p, req, res) {
   if (p === "/") p = "/index.html";

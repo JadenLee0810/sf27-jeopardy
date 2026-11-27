@@ -47,12 +47,33 @@ const Net = (function () {
     } catch (_) { setOnline(false); return false; }
   }
 
+  // Live stream when the server offers one (local / always-on hosts). Hosts without
+  // long-lived connections (Vercel) answer 404 there, so we fall back to polling /api/state.
+  let pollTimer = null;
+  async function pollOnce() {
+    try {
+      const r = await fetch("/api/state", { cache: "no-store" });
+      if (!r.ok) throw new Error("bad status");
+      accept(await r.json(), needSync); needSync = false;
+      setOnline(true);
+    } catch (_) { needSync = true; setOnline(false); }
+  }
+  function startPolling() {
+    if (pollTimer) return;
+    pollOnce();
+    pollTimer = setInterval(() => { if (!document.hidden) pollOnce(); }, 1500);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) pollOnce(); });
+  }
   function connect() {
-    if (!window.EventSource || es) return;
+    if (es || pollTimer) return;
+    if (!window.EventSource) return startPolling();
     es = new EventSource("/api/events");
     es.onopen = () => { needSync = true; setOnline(true); };
     es.onmessage = (e) => { setOnline(true); try { accept(JSON.parse(e.data), needSync); needSync = false; } catch (_) {} };
-    es.onerror = () => setOnline(false);          // the browser retries by itself
+    es.onerror = () => {
+      setOnline(false);
+      if (es.readyState === 2) { es.close(); es = null; startPolling(); }   // no live stream here: poll instead
+    };                                                                      // (otherwise the browser retries by itself)
   }
 
   return {

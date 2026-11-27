@@ -6,7 +6,7 @@
     "local": "node server.js",
     "start": "node server.js"
   },
-  "devDependencies": {
-    "http-server": "^14.1.1"
+  "engines": {
+    "node": ">=18"
   }
 }
