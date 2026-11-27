@@ -4,7 +4,7 @@
 //  Jaden is the host (sees the full answer key); the rest play.
 // ====================================================
 const ROSTER = [
-  { name: "Noah", bg: "campanile", school: "Boston University", short: "BU", mascot: "Terrier", kind: "bu",
+  { name: "Noah", bg: "campanile", cardImg: "noah-card.png", school: "Boston University", short: "BU", mascot: "Terrier", kind: "bu",
     c1: "#e23c2e", c2: "#4a0d0a",
     moves: [
       { n: "Comm Ave Dash", d: "Buzz in first and snag the clue.", p: "30" },
