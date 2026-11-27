@@ -12,7 +12,7 @@ const ROSTER = [
     ],
     flavor: "Square like Minecraft." },
 
-  { name: "Kevin", bg: "union", school: "UC Davis", short: "UCD", mascot: "Aggie", kind: "davis",
+  { name: "Kevin", bg: "union", cardImg: "kevin-card.png", school: "UC Davis", short: "UCD", mascot: "Aggie", kind: "davis",
     c1: "#d3b05a", c2: "#1e3f78",
     moves: [
       { n: "Aggie Stampede", d: "Chain correct answers for a bonus.", p: "40" },
@@ -28,7 +28,7 @@ const ROSTER = [
     ],
     flavor: "Weird asf." },
 
-  { name: "Jihoo", bg: "coit", school: "UCLA", short: "UCLA", mascot: "Bruin", kind: "ucla",
+  { name: "Jihoo", bg: "coit", cardImg: "jihoo-card.png", school: "UCLA", short: "UCLA", mascot: "Bruin", kind: "ucla",
     c1: "#2b8de0", c2: "#0d2e57",
     moves: [
       { n: "Bruin Blitz", d: "Fast buzz, big payout.", p: "40" },
