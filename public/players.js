@@ -20,7 +20,7 @@ const ROSTER = [
     ],
     flavor: "UC Dih's sexy frat queen." },
 
-  { name: "Hany", bg: "palace", school: "Rutgers", short: "RU", mascot: "Scarlet Knight", kind: "rutgers",
+  { name: "Hany", bg: "palace", cardImg: "hany-card.png", school: "Rutgers", short: "RU", mascot: "Scarlet Knight", kind: "rutgers",
     c1: "#d71f4b", c2: "#3a1018",
     moves: [
       { n: "Scarlet Charge", d: "Steal a clue another player misses.", p: "30" },

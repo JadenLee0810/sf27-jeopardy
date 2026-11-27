@@ -156,7 +156,10 @@
     sceneCv.className = "scene-bg";
     Backdrops.draw(sceneCv, r.bg || "campanile", 250, 212);
     art.classList.add("scene"); art.insertBefore(sceneCv, art.firstChild);
-    art.appendChild(cloneCanvas(spriteOf(r.kind)));
+    if (r.cardImg) {                                            // a custom picture instead of the pixel sprite (card only)
+      const im = new Image(); im.src = r.cardImg; im.alt = r.name; im.className = "art-img";
+      art.appendChild(im);
+    } else art.appendChild(cloneCanvas(spriteOf(r.kind)));
     live.push(() => { const e = stage.querySelector(".hp-val"); if (e && !r.host) e.textContent = Net.scores[r.name] || 0; });
 
     // little 3D tilt when you drag a finger / mouse over the card
